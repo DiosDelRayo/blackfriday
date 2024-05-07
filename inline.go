@@ -22,7 +22,6 @@ import (
 var (
 	urlRe    = `((https?|ftp):\/\/|\/)[-A-Za-z0-9+&@#\/%?=~_|!:,.;\(\)]+`
 	anchorRe = regexp.MustCompile(`^(<a\shref="` + urlRe + `"(\stitle="[^"<>]+")?\s?>` + urlRe + `<\/a>)`)
-
 	// https://www.w3.org/TR/html5/syntax.html#character-references
 	// highest unicode code point in 17 planes (2^20): 1,114,112d =
 	// 7 dec digits or 6 hex digits
@@ -902,7 +901,7 @@ func isEndOfLink(char byte) bool {
 	return isspace(char) || char == '<'
 }
 
-var validUris = [][]byte{[]byte("http://"), []byte("https://"), []byte("ftp://"), []byte("mailto://")}
+var validUris = [][]byte{[]byte("http://"), []byte("https://"), []byte("ftp://"), []byte("mailto://"), []byte("monero:"), []byte("bitcoin:")}
 var validPaths = [][]byte{[]byte("/"), []byte("./"), []byte("../")}
 
 func isSafeLink(link []byte) bool {

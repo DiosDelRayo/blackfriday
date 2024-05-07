@@ -582,6 +582,9 @@ func (r *HTMLRenderer) RenderNode(w io.Writer, node *Node, entering bool) WalkSt
 					titleBuff.WriteByte('"')
 					attrs = append(attrs, titleBuff.String())
 				}
+				if dest != nil && (bytes.HasPrefix(dest, []byte("monero:")) || bytes.HasPrefix(dest, []byte("bitcoin:"))) {
+					attrs = append(attrs, `rel="noopener"`)
+				}
 				r.tag(w, aTag, attrs)
 			} else {
 				if node.NoteID != 0 {
