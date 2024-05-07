@@ -1,3 +1,5 @@
+**This fork only added Monero and Bitcoin links.**
+
 Blackfriday
 [![Build Status][BuildV2SVG]][BuildV2URL]
 [![PkgGoDev][PkgGoDevV2SVG]][PkgGoDevV2URL]

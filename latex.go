@@ -240,6 +240,20 @@ func (options *Latex) Link(out *bytes.Buffer, link []byte, title []byte, content
 	out.WriteString("}")
 }
 
+// MoneroLink renders a Monero donation link
+func (options *Latex) MoneroLink(out *bytes.Buffer, link []byte, content []byte) {
+    moneroAddress := string(link)
+    htmlLink := "<a class=\"request monero\" href=\"monero:" + moneroAddress + "\" rel=\"noopener\">" + string(content) + "</a>"
+    out.WriteString(htmlLink)
+}
+
+// BitcoinLink renders a Bitcoin donation link
+func (options *Latex) BitcoinLink(out *bytes.Buffer, link []byte, content []byte) {
+    bitcoinAddress := string(link)
+    htmlLink := "<a class=\"request bitcoin\" href=\"bitcoin:" + bitcoinAddress + "\" rel=\"noopener\">" + string(content) + "</a>"
+    out.WriteString(htmlLink)
+}
+
 func (options *Latex) RawHtmlTag(out *bytes.Buffer, tag []byte) {
 }
 

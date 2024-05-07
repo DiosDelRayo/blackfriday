@@ -185,6 +185,8 @@ type Renderer interface {
 	Image(out *bytes.Buffer, link []byte, title []byte, alt []byte)
 	LineBreak(out *bytes.Buffer)
 	Link(out *bytes.Buffer, link []byte, title []byte, content []byte)
+	MoneroLink(out *bytes.Buffer, link []byte, content []byte)
+	BitcoinLink(out *bytes.Buffer, link []byte, content []byte)
 	RawHtmlTag(out *bytes.Buffer, tag []byte)
 	TripleEmphasis(out *bytes.Buffer, text []byte)
 	StrikeThrough(out *bytes.Buffer, text []byte)

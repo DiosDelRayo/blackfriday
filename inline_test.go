@@ -17,6 +17,7 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+	"bytes"
 )
 
 func runMarkdownInline(input string, opts Options, htmlFlags int, params HtmlRendererParameters) string {
@@ -1288,4 +1289,26 @@ func BenchmarkSmartDoubleQuotes(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		runMarkdownInline("this should be normal \"quoted\" text.\n", Options{}, HTML_USE_SMARTYPANTS, HtmlRendererParameters{})
 	}
+}
+
+func TestMoneroLink(t *testing.T) {
+    input := []byte("[donate](monero:83UXh3SQZGk63yCWA8cQcQFrYL6xat3aNASZcz7USgy94neK8proFxU1BJhxr4PWNPJy1ScKX2oxy6TX3BmcGJk67JbJmXG)")
+    expected := "<p><a class=\"request monero\" href=\"monero:83UXh3SQZGk63yCWA8cQcQFrYL6xat3aNASZcz7USgy94neK8proFxU1BJhxr4PWNPJy1ScKX2oxy6TX3BmcGJk67JbJmXG\" rel=\"noopener\">donate</a></p>\n"
+
+    output := MarkdownCommon(input)
+
+    if !bytes.Equal(output, []byte(expected)) {
+        t.Errorf("Expected %q, got %q", expected, string(output))
+    }
+}
+
+func TestBitcoinLink(t *testing.T) {
+    input := []byte("[tip me](bitcoin:1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2?amount=1000)")
+    expected := "<p><a class=\"request bitcoin\" href=\"bitcoin:1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2?amount=1000\" rel=\"noopener\">tip me</a></p>\n"
+
+    output := MarkdownCommon(input)
+
+    if !bytes.Equal(output, []byte(expected)) {
+        t.Errorf("Expected %q, got %q", expected, string(output))
+    }
 }

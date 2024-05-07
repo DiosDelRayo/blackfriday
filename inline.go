@@ -22,6 +22,8 @@ import (
 var (
 	urlRe    = `((https?|ftp):\/\/|\/)[-A-Za-z0-9+&@#\/%?=~_|!:,.;\(\)]+`
 	anchorRe = regexp.MustCompile(`^(<a\shref="` + urlRe + `"(\stitle="[^"<>]+")?\s?>` + urlRe + `<\/a>)`)
+	moneroUriPattern = regexp.MustCompile(`\[.*\]\(monero:(?P<address>[a-zA-Z0-9]{95})(\?(?P<amount>amount=\d+)?(&(?P<label>label=\w+))?(&(?P<message>message=\w+))?)?\)`)
+	bitcoinUriPattern = regexp.MustCompile(`\[.*\]\(bitcoin:(?P<address>[a-zA-Z0-9]{34})(\?(?P<amount>amount=\d+)?(&(?P<label>label=\w+))?(&(?P<message>message=\w+))?)?\)`)
 )
 
 // Functions to parse text within a block
@@ -193,6 +195,8 @@ const (
 	linkImg
 	linkDeferredFootnote
 	linkInlineFootnote
+	linkMonero
+	linkBitcoin
 )
 
 func isReferenceStyleLink(data []byte, pos int, t linkType) bool {
@@ -226,6 +230,10 @@ func link(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 		} else if len(data)-1 > offset && data[offset+1] == '^' {
 			t = linkDeferredFootnote
 		}
+	case moneroUriPattern.Match(data[offset:]):
+		t = linkMonero
+	case bitcoinUriPattern.Match(data[offset:]):
+		t = linkBitcoin
 	// [text] == regular link
 	default:
 		t = linkNormal
@@ -574,6 +582,14 @@ func link(p *parser, out *bytes.Buffer, data []byte, offset int) int {
 	case linkDeferredFootnote:
 		p.r.FootnoteRef(out, link, noteId)
 
+	case linkMonero:
+		link = data[16:len(data)-1]
+		p.r.MoneroLink(out, link, content.Bytes())
+
+	case linkBitcoin:
+		link = data[17:len(data)-1]
+		p.r.BitcoinLink(out, link, content.Bytes())
+
 	default:
 		return 0
 	}
@@ -821,7 +837,7 @@ func isEndOfLink(char byte) bool {
 	return isspace(char) || char == '<'
 }
 
-var validUris = [][]byte{[]byte("http://"), []byte("https://"), []byte("ftp://"), []byte("mailto://")}
+var validUris = [][]byte{[]byte("http://"), []byte("https://"), []byte("ftp://"), []byte("mailto://"), []byte("monero:"), []byte("bitcoin:")}
 var validPaths = [][]byte{[]byte("/"), []byte("./"), []byte("../")}
 
 func isSafeLink(link []byte) bool {
